@@ -1,0 +1,14 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root { --radius: 0.5rem; }
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
+.container-narrow { @apply max-w-6xl mx-auto px-4 md:px-6 lg:px-8; }
+.card { @apply bg-card text-card-foreground rounded-lg border; }
+.badge { @apply inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium; }
+.pill { @apply inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; }
