@@ -1,4 +1,3 @@
-
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const BASE = 'https://api.api-tennis.com/tennis/'
@@ -13,7 +12,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const APIKEY = process.env.TENNIS_API_KEY
   if (!APIKEY) return res.status(500).json({ success: false, error: 'Missing TENNIS_API_KEY on server' })
 
-  const allowed = new Set(['get_livescore','get_fixtures','get_H2H'])
+  // allow rankings & player details
+ const allowed = new Set([
+   'get_livescore',
+   'get_fixtures',
+   'get_H2H',
+   'get_standings',
+   'get_players',
+   'get_events',
+ ])
   const method = String(req.query.method || '')
   if (!allowed.has(method)) return res.status(400).json({ success: false, error: 'Unsupported method' })
 
