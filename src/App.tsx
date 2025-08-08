@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Select } from '@/components/ui/select'
 import type { MatchLite, LiveStats, SetScore } from './api'
 import { fetchLiveMatches, subscribeLive } from './api'
+import RankingsPage from '@/pages/Rankings'
 
 type Tour = 'ATP'|'WTA'|'ALL'
 function fmtSetScore(s: SetScore){ return `${s.p1}-${s.p2}` }
@@ -27,7 +27,7 @@ function MatchRow({ m, onOpen }: { m: MatchLite; onOpen: (id: string)=>void }){
             <WinnerBadge status={m.status} /><span>{m.tour}</span><span>•</span><span>{m.tournament}</span>{m.round && (<><span>•</span><span>{m.round}</span></>)}
           </div>
           <div className="font-semibold">{m.player1.name} {m.server===1 && <span className="ml-1">🎾</span>} <span className="mx-2">vs</span> {m.player2.name} {m.server===2 && <span className="ml-1">🎾</span>}</div>
-          <div className="text-sm text-muted-foreground mt-1 flex items-center flex-wrap gap-2">
+          <div className="text-sm text-muted-foreground mt-1 flex items中心 gap-2">
             {m.currentGame && <Pill>Game {m.currentGame}</Pill>}{m.startTime && <Pill>{new Date(m.startTime).toLocaleTimeString()}</Pill>}
           </div>
         </div>
@@ -103,15 +103,19 @@ function Details({ matchId, onBack }:{ matchId:string; onBack: ()=>void }){
   )
 }
 export default function App(){
-  const [view, setView] = useState<'board' | { type:'details'; id:string }>('board')
+  const [view, setView] = useState<'board' | { type:'details'; id:string } | 'rankings'>('board')
   const [selected, setSelected] = useState<string | null>(null)
   return (
     <div className="min-h-screen py-6"><div className="container-narrow">
       <header className="mb-6"><div className="flex items-center justify-between">
         <h1 className="text-2xl md:text-3xl font-bold">WTA/ATP Live Scoreboard</h1>
-        <div className="flex items-center gap-2"><Button variant="outline" onClick={()=>setView('board')}>Scoreboard</Button></div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={()=>setView('board')}>Scoreboard</Button>
+          <Button variant="outline" onClick={()=>setView('rankings')}>Rankings</Button>
+        </div>
       </div><p className="text-sm text-muted-foreground mt-1">实时比分 + 技术统计 + H2H（API-Tennis，经 Vercel 代理）</p></header>
       {view === 'board' && <Scoreboard onOpen={(id)=>{ setSelected(id); setView({ type:'details', id }) }} />}
+      {view === 'rankings' && <RankingsPage />}
       {typeof view === 'object' && view.type==='details' && selected && <Details matchId={selected} onBack={()=>setView('board')} />}
       <footer className="mt-8 text-xs text-muted-foreground">生产环境默认走 <code>/api/tennis</code>；本地可用 <code>VITE_TENNIS_API_KEY</code> 或 <code>VITE_TENNIS_API_PROXY</code>。</footer>
     </div></div>
